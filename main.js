@@ -1,16 +1,44 @@
+// Funkcja do obliczania wymiarów na podstawie szerokości ekranu
+function getResponsiveValues() {
+  const width = window.innerWidth;
+  const baseWidth = 1920; // szerokość referencyjna
+  const scale = Math.min(width / baseWidth, 1);
+
+  return {
+    imageWidth: Math.round(1680 * scale),
+    imageHeight: Math.round(1120 * scale),
+    zDistance: Math.round(2200 * scale),
+    perspective: Math.round(1500 * scale)
+  };
+}
+
+// Aktualizacja parametrów slidera
+function updateSliderParameters() {
+  const values = getResponsiveValues();
+  
+  gsap.set('.container', {
+    perspective: values.perspective
+  });
+
+  gsap.set('.img', {
+    width: values.imageWidth,
+    height: values.imageHeight,
+    rotateY: (i) => i * -45,
+    transformOrigin: `50% 50% ${values.zDistance}px`,
+    z: -values.zDistance,
+    backgroundImage: (i) => `url(https://picsum.photos/id/${(i + 32)}/${values.imageWidth}/${values.imageHeight}/)`,
+    backgroundPosition: (i) => getBgPos(i),
+    backfaceVisibility: 'hidden'
+  });
+}
+
 let xPos = 0;
 
+// Inicjalizacja slidera
 gsap.timeline()
     .set(dragger, { opacity: 0 })
     .set(ring, { rotationY: 180 })
-    .set('.img', {
-      rotateY: (i) => i * -45,
-      transformOrigin: '50% 50% 2200px',
-      z: -2200,
-      backgroundImage: (i) => 'url(https://picsum.photos/id/' + (i + 32) + '/1680/1120/)',
-      backgroundPosition: (i) => getBgPos(i),
-      backfaceVisibility: 'hidden'
-    })
+    .add(() => updateSliderParameters())
     .from('.img', {
       duration: 1.5,
       y: 200,
@@ -45,5 +73,13 @@ Draggable.create(dragger, {
 });
 
 function getBgPos(i) {
-  return (-gsap.utils.wrap(0, 360, gsap.getProperty(ring, 'rotationY') - 180 - i * 45) / 360 * 1680) + 'px 0px';
+  const values = getResponsiveValues();
+  return (-gsap.utils.wrap(0, 360, gsap.getProperty(ring, 'rotationY') - 180 - i * 45) / 360 * values.imageWidth) + 'px 0px';
 }
+
+// Nasłuchiwanie na zmiany rozmiaru okna
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(updateSliderParameters, 100);
+});
