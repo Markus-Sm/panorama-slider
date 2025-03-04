@@ -1,39 +1,67 @@
-html, body, .stage, .ring, .img {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    user-select: none;
+html, body, #dragger, #ring, .img, .vignette {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  user-select: none;
+  margin: 0;
+  padding: 0;
 }
 
-html, body, 
-.stage {
+html, body {
   overflow: hidden;
   background: #000;
 }
-div, svg {
+
+div {
   position: absolute;
 }
-
-
 
 .container {
-  perspective: 2000px;
-  width: 100vh;
-  height: 500px;
+  perspective: 1000px;
+  width: 100%;
+  height: 100vh;
   left: 50%;
   top: 50%;
-  transform: 
-  translate(-50%, -50%);
-}
-div, svg {
-  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
-.img{
-  width: calc(100vw / 3);
-  height: 100%;
-  background-repeat: no-repeat;
+#ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.img {
+  position: absolute;
+  width: 1680px;
+  height: 1120px;
   background-size: cover;
-  width: 400px;
-  height: 500px;
+  background-position: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.7);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.img:hover {
+  opacity: 1;
+}
+
+.vignette {
+  width: 100%;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+#dragger {
+  cursor: grab;
+  z-index: 1000;
 }
