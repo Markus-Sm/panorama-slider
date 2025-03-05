@@ -5,8 +5,8 @@ $(document).ready(function() {
     const scale = Math.min(width / baseWidth, 1);
 
     return {
-      imageWidth: Math.round(1680 * scale),
-      imageHeight: Math.round(1120 * scale),
+      videoWidth: Math.round(1680 * scale),
+      videoHeight: Math.round(1120 * scale),
       zDistance: Math.round(2200 * scale),
       perspective: Math.round(1500 * scale)
     };
@@ -20,14 +20,32 @@ $(document).ready(function() {
     });
 
     gsap.set('.ring__video', {
-      width: values.imageWidth,
-      height: values.imageHeight,
+      width: values.videoWidth,
+      height: values.videoHeight,
       rotateY: (i) => i * -45,
       transformOrigin: `50% 50% ${values.zDistance}px`,
       z: -values.zDistance,
-      backgroundImage: (i) => `url(https://picsum.photos/id/${(i + 32)}/${values.imageWidth}/${values.imageHeight}/)`,
-      backgroundPosition: (i) => getBgPos(i),
       backfaceVisibility: 'hidden'
+    });
+  }
+
+  // Inicjalizacja wideo
+  function initializeVideos() {
+    $('.ring__video').each(function(index) {
+      const video = $(this);
+      const source = video.find('source');
+      
+      // Ustawiamy właściwe źródło dla każdego wideo
+      source.attr('src', source.data('src'));
+      video.attr('poster', video.data('poster'));
+      
+      // Ładujemy wideo
+      video[0].load();
+      
+      // Obsługa błędów
+      video.on('error', function() {
+        console.error('Error loading video:', index);
+      });
     });
   }
 
@@ -35,7 +53,6 @@ $(document).ready(function() {
   let isAnimating = false;
   let isDragging = false;
 
-  // Rotation animation function
   function rotateSlider(direction) {
     if (isAnimating || isDragging) return;
     
@@ -46,23 +63,20 @@ $(document).ready(function() {
       rotationY: `+=${angle}`,
       duration: 0.8,
       ease: 'power2.out',
-      onUpdate: () => {
-        gsap.set('.ring__video', { 
-          backgroundPosition: (i) => getBgPos(i) 
-        });
-      },
       onComplete: () => {
         isAnimating = false;
       }
     });
   }
 
-  // Slider initialization
-
+  // Inicjalizacja slidera
   const tl = gsap.timeline();
   tl.set('#dragger', { opacity: 0 })
     .set('#ring', { rotationY: 180 })
-    .add(() => updateSliderParameters())
+    .add(() => {
+      updateSliderParameters();
+      initializeVideos();
+    })
     .from('.ring__video', {
       duration: 1.5,
       y: 200,
@@ -71,17 +85,15 @@ $(document).ready(function() {
       ease: 'expo'
     });
 
-  // Arrow event listeners
+  // Event listeners
   $('.panorama-slider__arrow--prev').on('click', () => rotateSlider('prev'));
   $('.panorama-slider__arrow--next').on('click', () => rotateSlider('next'));
 
-  // Keyboard event listener
   $(document).on('keydown', (e) => {
     if (e.key === 'ArrowLeft') rotateSlider('prev');
     if (e.key === 'ArrowRight') rotateSlider('next');
   });
 
-  // Obsługa hover na video elementach
   $('.ring__video').on({
     mouseenter: function() {
       if (!isDragging) {
@@ -101,7 +113,6 @@ $(document).ready(function() {
     }
   });
 
-  // Inicjalizacja Draggable
   Draggable.create('#dragger', {
     type: 'x',
     inertia: true,
@@ -119,9 +130,7 @@ $(document).ready(function() {
       gsap.to('#ring', {
         rotationY: '-=' + ((Math.round(e.clientX) - xPos) % 360),
         onUpdate: () => { 
-          gsap.set('.ring__video', { 
-            backgroundPosition: (i) => getBgPos(i) 
-          });
+          // Możemy usunąć updateowanie pozycji tła, bo teraz używamy video
         }
       });
       
@@ -140,12 +149,6 @@ $(document).ready(function() {
     }
   });
 
-  function getBgPos(i) {
-    const values = getResponsiveValues();
-    return (-gsap.utils.wrap(0, 360, gsap.getProperty('#ring', 'rotationY') - 180 - i * 45) / 360 * values.imageWidth) + 'px 0px';
-  }
-
-  // Nasłuchiwanie na zmiany rozmiaru okna
   let resizeTimeout;
   $(window).on('resize', function() {
     clearTimeout(resizeTimeout);
