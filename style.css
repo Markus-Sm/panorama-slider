@@ -53,9 +53,15 @@ div {
   border-radius: 20px;
   opacity: 0.8;
   transition: all 0.3s ease;
+  cursor: grab;
 }
+
 .ring__video:hover {
   opacity: 1;
+}
+
+.ring__video.draggable {
+  cursor: grabbing;
 }
 
 #dragger {
@@ -64,16 +70,13 @@ div {
   height: 100%;
   cursor: grab;
   z-index: 10;
+  opacity: 0;
   pointer-events: none;
-}
-
-.ring {
-  pointer-events: auto;
 }
 
 .panorama-slider__arrow {
   position: absolute;
-  top: 50%;
+  bottom: 100px;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.2);
   border: none;
@@ -99,7 +102,7 @@ div {
 }
 
 .panorama-slider__arrow--prev {
-  left: 20px;
+  right: 120px;
 }
 
 .panorama-slider__arrow--next {
