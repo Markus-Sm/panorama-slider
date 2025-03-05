@@ -73,7 +73,7 @@ div {
 
 .panorama-slider__arrow {
   position: absolute;
-  top: 50%;
+  bottom: 100px;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.2);
   border: none;
@@ -99,7 +99,7 @@ div {
 }
 
 .panorama-slider__arrow--prev {
-  left: 20px;
+  right: 120px;
 }
 
 .panorama-slider__arrow--next {

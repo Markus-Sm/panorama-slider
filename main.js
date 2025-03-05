@@ -40,7 +40,7 @@ function rotateSlider(direction) {
   if (isAnimating) return;
   
   isAnimating = true;
-  const angle = direction === 'next' ? -45 : 45;
+  const angle = direction === 'next' ? 45 : -45;
   
   gsap.to(ring, {
     rotationY: `+=${angle}`,
