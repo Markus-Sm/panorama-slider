@@ -16,7 +16,7 @@ function getResponsiveValues() {
 function updateSliderParameters() {
   const values = getResponsiveValues();
   
-  gsap.set('.slider-container', {
+  gsap.set('.panorama-slider__container', {
     perspective: values.perspective
   });
 
@@ -33,6 +33,29 @@ function updateSliderParameters() {
 }
 
 let xPos = 0;
+let isAnimating = false;
+
+// Funkcja do animacji obrotu
+function rotateSlider(direction) {
+  if (isAnimating) return;
+  
+  isAnimating = true;
+  const angle = direction === 'next' ? -45 : 45;
+  
+  gsap.to(ring, {
+    rotationY: `+=${angle}`,
+    duration: 0.8,
+    ease: 'power2.out',
+    onUpdate: () => {
+      gsap.set('.ring__video', { 
+        backgroundPosition: (i) => getBgPos(i) 
+      });
+    },
+    onComplete: () => {
+      isAnimating = false;
+    }
+  });
+}
 
 // Inicjalizacja slidera
 gsap.timeline()
@@ -46,6 +69,32 @@ gsap.timeline()
       stagger: 0.1,
       ease: 'expo'
     });
+
+// Obsługa strzałek
+const prevButton = document.querySelector('.panorama-slider__arrow--prev');
+const nextButton = document.querySelector('.panorama-slider__arrow--next');
+
+prevButton.addEventListener('click', () => rotateSlider('prev'));
+nextButton.addEventListener('click', () => rotateSlider('next'));
+
+// Obsługa klawiszy strzałek
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') rotateSlider('prev');
+  if (e.key === 'ArrowRight') rotateSlider('next');
+});
+
+// Włączanie/wyłączanie draggable podczas interakcji ze strzałkami
+function toggleDraggable(enable) {
+  gsap.set('#dragger', {
+    pointerEvents: enable ? 'auto' : 'none'
+  });
+}
+
+// Nasłuchiwanie na hover na strzałkach
+[prevButton, nextButton].forEach(button => {
+  button.addEventListener('mouseenter', () => toggleDraggable(false));
+  button.addEventListener('mouseleave', () => toggleDraggable(true));
+});
 
 Draggable.create(dragger, {
   type: 'x',
