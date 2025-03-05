@@ -1,4 +1,20 @@
-html, body, #dragger, #ring, .img, .vignette {
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.slider-wrapper {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+#dragger, #ring, .ring__video {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
@@ -7,16 +23,11 @@ html, body, #dragger, #ring, .img, .vignette {
   padding: 0;
 }
 
-html, body {
-  overflow: hidden;
-  background: #000;
-}
-
 div {
   position: absolute;
 }
 
-.container {
+.slider-container {
   perspective: 1500px;
   width: 100%;
   height: 100vh;
@@ -32,7 +43,7 @@ div {
   transform: translate(-50%, -50%);
 }
 
-.img {
+.ring__video {
   position: absolute;
   background-size: cover;
   background-position: center;
@@ -40,23 +51,11 @@ div {
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 20px;
-  box-shadow: 0 0 50px rgba(0,0,0,0.7);
   opacity: 0.8;
   transition: all 0.3s ease;
 }
-
-.img:hover {
+.ring__video:hover {
   opacity: 1;
-}
-
-.vignette {
-  width: 100%;
-  height: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,1) 100%);
-  pointer-events: none;
-  z-index: 1;
 }
 
 #dragger {
@@ -66,27 +65,24 @@ div {
 
 /* Media Queries */
 @media (max-width: 768px) {
-  .container {
+  .slider-container {
     perspective: 1000px;
   }
   
-  .img {
+  .ring__video {
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0,0,0,0.5);
   }
 }
 
 @media (max-width: 480px) {
-  .container {
+  .slider-container {
     perspective: 800px;
   }
   
-  .img {
+  .ring__video {
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
   }
-  
-  .vignette {
-    background: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,1) 100%);
-  }
+
 }

@@ -16,11 +16,11 @@ function getResponsiveValues() {
 function updateSliderParameters() {
   const values = getResponsiveValues();
   
-  gsap.set('.container', {
+  gsap.set('.slider-container', {
     perspective: values.perspective
   });
 
-  gsap.set('.img', {
+  gsap.set('.ring__video', {
     width: values.imageWidth,
     height: values.imageHeight,
     rotateY: (i) => i * -45,
@@ -39,7 +39,7 @@ gsap.timeline()
     .set(dragger, { opacity: 0 })
     .set(ring, { rotationY: 180 })
     .add(() => updateSliderParameters())
-    .from('.img', {
+    .from('.ring__video', {
       duration: 1.5,
       y: 200,
       opacity: 0,
@@ -61,7 +61,7 @@ Draggable.create(dragger, {
     
     gsap.to(ring, {
       rotationY: '-=' + ((Math.round(e.clientX) - xPos) % 360),
-      onUpdate: () => { gsap.set('.img', { backgroundPosition: (i) => getBgPos(i) }) }
+      onUpdate: () => { gsap.set('.ring__video', { backgroundPosition: (i) => getBgPos(i) }) }
     });
     
     xPos = Math.round(e.clientX);
