@@ -53,9 +53,15 @@ div {
   border-radius: 20px;
   opacity: 0.8;
   transition: all 0.3s ease;
+  cursor: grab;
 }
+
 .ring__video:hover {
   opacity: 1;
+}
+
+.ring__video.draggable {
+  cursor: grabbing;
 }
 
 #dragger {
@@ -64,11 +70,8 @@ div {
   height: 100%;
   cursor: grab;
   z-index: 10;
+  opacity: 0;
   pointer-events: none;
-}
-
-.ring {
-  pointer-events: auto;
 }
 
 .panorama-slider__arrow {

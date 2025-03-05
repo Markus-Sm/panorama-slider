@@ -34,10 +34,11 @@ function updateSliderParameters() {
 
 let xPos = 0;
 let isAnimating = false;
+let isDragging = false;
 
 // Funkcja do animacji obrotu
 function rotateSlider(direction) {
-  if (isAnimating) return;
+  if (isAnimating || isDragging) return;
   
   isAnimating = true;
   const angle = direction === 'next' ? 45 : -45;
@@ -83,17 +84,26 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') rotateSlider('next');
 });
 
-// Włączanie/wyłączanie draggable podczas interakcji ze strzałkami
-function toggleDraggable(enable) {
-  gsap.set('#dragger', {
-    pointerEvents: enable ? 'auto' : 'none'
+// Obsługa hover na video elementach
+const videoElements = document.querySelectorAll('.ring__video');
+videoElements.forEach(video => {
+  video.addEventListener('mouseenter', () => {
+    if (!isDragging) {
+      gsap.set('#dragger', {
+        pointerEvents: 'auto',
+        opacity: 1
+      });
+    }
   });
-}
-
-// Nasłuchiwanie na hover na strzałkach
-[prevButton, nextButton].forEach(button => {
-  button.addEventListener('mouseenter', () => toggleDraggable(false));
-  button.addEventListener('mouseleave', () => toggleDraggable(true));
+  
+  video.addEventListener('mouseleave', () => {
+    if (!isDragging) {
+      gsap.set('#dragger', {
+        pointerEvents: 'none',
+        opacity: 0
+      });
+    }
+  });
 });
 
 Draggable.create(dragger, {
@@ -101,8 +111,10 @@ Draggable.create(dragger, {
   inertia: true,
   
   onDragStart: (e) => {
+    isDragging = true;
     if (e.touches) e.clientX = e.touches[0].clientX;
     xPos = Math.round(e.clientX);
+    videoElements.forEach(video => video.classList.add('draggable'));
   },
   
   onDrag: (e) => {
@@ -117,7 +129,14 @@ Draggable.create(dragger, {
   },
   
   onDragEnd: () => {
-    gsap.set(dragger, { x: 0, y: 0 });
+    isDragging = false;
+    gsap.set(dragger, { 
+      x: 0, 
+      y: 0,
+      pointerEvents: 'none',
+      opacity: 0
+    });
+    videoElements.forEach(video => video.classList.remove('draggable'));
   }
 });
 
