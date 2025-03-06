@@ -117,24 +117,15 @@ $(document).ready(function() {
     type: 'x',
     inertia: true,
     
-    onDragStart: function(e) {
+    onDragStart: function() {
       isDragging = true;
-      if (e.touches) e.clientX = e.touches[0].clientX;
-      xPos = Math.round(e.clientX);
+      this.startRotation = gsap.getProperty('#ring', 'rotationY');
       $('.ring__video').addClass('draggable');
     },
     
-    onDrag: function(e) {
-      if (e.touches) e.clientX = e.touches[0].clientX;
-      
-      gsap.to('#ring', {
-        rotationY: '-=' + ((Math.round(e.clientX) - xPos) % 360),
-        onUpdate: () => { 
-          // Możemy usunąć updateowanie pozycji tła, bo teraz używamy video
-        }
-      });
-      
-      xPos = Math.round(e.clientX);
+    onDrag: function() {
+      const rotation = this.startRotation + (this.x * 0.2);
+      gsap.set('#ring', { rotationY: rotation });
     },
     
     onDragEnd: function() {
