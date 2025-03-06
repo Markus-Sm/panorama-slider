@@ -49,25 +49,30 @@ $(document).ready(function() {
     });
   }
 
-  let rotation = 180;
+  let xPos = 0;
+  let isAnimating = false;
   let isDragging = false;
 
   function rotateSlider(direction) {
-    if (isDragging) return;
+    if (isAnimating || isDragging) return;
     
-    rotation += (direction === 'next' ? 45 : -45);
+    isAnimating = true;
+    const angle = direction === 'next' ? 45 : -45;
     
     gsap.to('#ring', {
-      rotationY: rotation,
+      rotationY: `+=${angle}`,
       duration: 0.8,
-      ease: 'power2.out'
+      ease: 'power2.out',
+      onComplete: () => {
+        isAnimating = false;
+      }
     });
   }
 
   // Inicjalizacja slidera
   const tl = gsap.timeline();
   tl.set('#dragger', { opacity: 0 })
-    .set('#ring', { rotationY: rotation })
+    .set('#ring', { rotationY: 180 })
     .add(() => {
       updateSliderParameters();
       initializeVideos();
@@ -81,9 +86,9 @@ $(document).ready(function() {
     });
 
   // Event listeners
-  $('.panorama-slider__arrow--prev').click(() => rotateSlider('prev'));
-  $('.panorama-slider__arrow--next').click(() => rotateSlider('next'));
-  
+  $('.panorama-slider__arrow--prev').on('click', () => rotateSlider('prev'));
+  $('.panorama-slider__arrow--next').on('click', () => rotateSlider('next'));
+
   $(document).on('keydown', (e) => {
     if (e.key === 'ArrowLeft') rotateSlider('prev');
     if (e.key === 'ArrowRight') rotateSlider('next');
@@ -92,18 +97,12 @@ $(document).ready(function() {
   $('.ring__video').on({
     mouseenter: function() {
       if (!isDragging) {
-        gsap.set('#dragger', {
-          pointerEvents: 'auto',
-          opacity: 1
-        });
+        $('#dragger').addClass('active');
       }
     },
     mouseleave: function() {
       if (!isDragging) {
-        gsap.set('#dragger', {
-          pointerEvents: 'none',
-          opacity: 0
-        });
+        $('#dragger').removeClass('active');
       }
     }
   });
@@ -111,19 +110,21 @@ $(document).ready(function() {
   Draggable.create('#dragger', {
     type: 'x',
     inertia: true,
+    dragResistance: 0.4,
     cursor: 'grab',
     
     onDragStart: function() {
       isDragging = true;
-      this.startRotation = rotation;
+      this.startRotation = gsap.getProperty('#ring', 'rotationY');
       this.startX = this.x;
       $('.ring__video').addClass('draggable');
       gsap.set(this.target, { cursor: 'grabbing' });
+      $(this.target).addClass('active');
     },
     
     onDrag: function() {
       const dx = this.startX - this.x;
-      rotation = this.startRotation + (dx * 0.5);
+      const rotation = this.startRotation + (dx * 0.5);
       gsap.set('#ring', { rotationY: rotation });
     },
     
@@ -133,32 +134,10 @@ $(document).ready(function() {
       gsap.set(this.target, {
         x: 0,
         y: 0,
-        cursor: 'grab',
-        pointerEvents: 'auto',
-        opacity: 1
+        cursor: 'grab'
       });
+      $(this.target).removeClass('active');
       $('.ring__video').removeClass('draggable');
-    }
-  });
-
-  // Aktualizacja obsługi hover dla #dragger
-  $('#dragger').on({
-    mouseenter: function() {
-      if (!isDragging) {
-        gsap.set(this, {
-          pointerEvents: 'auto',
-          opacity: 1,
-          cursor: 'grab'
-        });
-      }
-    },
-    mouseleave: function() {
-      if (!isDragging) {
-        gsap.set(this, {
-          pointerEvents: 'none',
-          opacity: 0
-        });
-      }
     }
   });
 
