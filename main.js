@@ -97,18 +97,12 @@ $(document).ready(function() {
   $('.ring__video').on({
     mouseenter: function() {
       if (!isDragging) {
-        gsap.set('#dragger', {
-          pointerEvents: 'auto',
-          opacity: 1
-        });
+        $('#dragger').addClass('active');
       }
     },
     mouseleave: function() {
       if (!isDragging) {
-        gsap.set('#dragger', {
-          pointerEvents: 'none',
-          opacity: 0
-        });
+        $('#dragger').removeClass('active');
       }
     }
   });
@@ -117,12 +111,15 @@ $(document).ready(function() {
     type: 'x',
     inertia: true,
     dragResistance: 0.4,
+    cursor: 'grab',
     
     onDragStart: function() {
       isDragging = true;
       this.startRotation = gsap.getProperty('#ring', 'rotationY');
       this.startX = this.x;
       $('.ring__video').addClass('draggable');
+      gsap.set(this.target, { cursor: 'grabbing' });
+      $(this.target).addClass('active');
     },
     
     onDrag: function() {
@@ -133,12 +130,13 @@ $(document).ready(function() {
     
     onDragEnd: function() {
       isDragging = false;
-      gsap.set('#dragger', { 
-        x: 0, 
+      this.startX = 0;
+      gsap.set(this.target, {
+        x: 0,
         y: 0,
-        pointerEvents: 'none',
-        opacity: 0
+        cursor: 'grab'
       });
+      $(this.target).removeClass('active');
       $('.ring__video').removeClass('draggable');
     }
   });
