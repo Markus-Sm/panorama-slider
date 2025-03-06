@@ -116,15 +116,18 @@ $(document).ready(function() {
   Draggable.create('#dragger', {
     type: 'x',
     inertia: true,
+    dragResistance: 0.4,
     
     onDragStart: function() {
       isDragging = true;
       this.startRotation = gsap.getProperty('#ring', 'rotationY');
+      this.startX = this.x;
       $('.ring__video').addClass('draggable');
     },
     
     onDrag: function() {
-      const rotation = this.startRotation + (this.x * 0.2);
+      const dx = this.startX - this.x;
+      const rotation = this.startRotation + (dx * 0.5);
       gsap.set('#ring', { rotationY: rotation });
     },
     
