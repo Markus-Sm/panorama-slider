@@ -52,15 +52,17 @@ $(document).ready(function() {
   let xPos = 0;
   let isAnimating = false;
   let isDragging = false;
+  let currentRotation = 180; // Początkowa rotacja
 
   function rotateSlider(direction) {
     if (isAnimating || isDragging) return;
     
     isAnimating = true;
     const angle = direction === 'next' ? 45 : -45;
+    currentRotation += angle;
     
     gsap.to('#ring', {
-      rotationY: `+=${angle}`,
+      rotationY: currentRotation,
       duration: 0.8,
       ease: 'power2.out',
       onComplete: () => {
@@ -72,7 +74,7 @@ $(document).ready(function() {
   // Inicjalizacja slidera
   const tl = gsap.timeline();
   tl.set('#dragger', { opacity: 0 })
-    .set('#ring', { rotationY: 180 })
+    .set('#ring', { rotationY: currentRotation })
     .add(() => {
       updateSliderParameters();
       initializeVideos();
@@ -117,29 +119,54 @@ $(document).ready(function() {
     type: 'x',
     inertia: true,
     dragResistance: 0.4,
+    cursor: 'grab',
     
     onDragStart: function() {
       isDragging = true;
-      this.startRotation = gsap.getProperty('#ring', 'rotationY');
+      this.startRotation = currentRotation;
       this.startX = this.x;
       $('.ring__video').addClass('draggable');
+      gsap.set(this.target, { cursor: 'grabbing' });
     },
     
     onDrag: function() {
       const dx = this.startX - this.x;
-      const rotation = this.startRotation + (dx * 0.5);
-      gsap.set('#ring', { rotationY: rotation });
+      currentRotation = this.startRotation + (dx * 0.5);
+      gsap.set('#ring', { rotationY: currentRotation });
     },
     
     onDragEnd: function() {
       isDragging = false;
-      gsap.set('#dragger', { 
-        x: 0, 
+      this.startX = 0;
+      gsap.set(this.target, {
+        x: 0,
         y: 0,
-        pointerEvents: 'none',
-        opacity: 0
+        cursor: 'grab',
+        pointerEvents: 'auto',
+        opacity: 1
       });
       $('.ring__video').removeClass('draggable');
+    }
+  });
+
+  // Aktualizacja obsługi hover dla #dragger
+  $('#dragger').on({
+    mouseenter: function() {
+      if (!isDragging) {
+        gsap.set(this, {
+          pointerEvents: 'auto',
+          opacity: 1,
+          cursor: 'grab'
+        });
+      }
+    },
+    mouseleave: function() {
+      if (!isDragging) {
+        gsap.set(this, {
+          pointerEvents: 'none',
+          opacity: 0
+        });
+      }
     }
   });
 
