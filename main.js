@@ -49,32 +49,25 @@ $(document).ready(function() {
     });
   }
 
-  let xPos = 0;
-  let isAnimating = false;
+  let rotation = 180;
   let isDragging = false;
-  let currentRotation = 180; // Początkowa rotacja
 
   function rotateSlider(direction) {
-    if (isAnimating || isDragging) return;
+    if (isDragging) return;
     
-    isAnimating = true;
-    const angle = direction === 'next' ? 45 : -45;
-    currentRotation += angle;
+    rotation += (direction === 'next' ? 45 : -45);
     
     gsap.to('#ring', {
-      rotationY: currentRotation,
+      rotationY: rotation,
       duration: 0.8,
-      ease: 'power2.out',
-      onComplete: () => {
-        isAnimating = false;
-      }
+      ease: 'power2.out'
     });
   }
 
   // Inicjalizacja slidera
   const tl = gsap.timeline();
   tl.set('#dragger', { opacity: 0 })
-    .set('#ring', { rotationY: currentRotation })
+    .set('#ring', { rotationY: rotation })
     .add(() => {
       updateSliderParameters();
       initializeVideos();
@@ -88,9 +81,9 @@ $(document).ready(function() {
     });
 
   // Event listeners
-  $('.panorama-slider__arrow--prev').on('click', () => rotateSlider('prev'));
-  $('.panorama-slider__arrow--next').on('click', () => rotateSlider('next'));
-
+  $('.panorama-slider__arrow--prev').click(() => rotateSlider('prev'));
+  $('.panorama-slider__arrow--next').click(() => rotateSlider('next'));
+  
   $(document).on('keydown', (e) => {
     if (e.key === 'ArrowLeft') rotateSlider('prev');
     if (e.key === 'ArrowRight') rotateSlider('next');
@@ -118,12 +111,11 @@ $(document).ready(function() {
   Draggable.create('#dragger', {
     type: 'x',
     inertia: true,
-    dragResistance: 0.4,
     cursor: 'grab',
     
     onDragStart: function() {
       isDragging = true;
-      this.startRotation = currentRotation;
+      this.startRotation = rotation;
       this.startX = this.x;
       $('.ring__video').addClass('draggable');
       gsap.set(this.target, { cursor: 'grabbing' });
@@ -131,8 +123,8 @@ $(document).ready(function() {
     
     onDrag: function() {
       const dx = this.startX - this.x;
-      currentRotation = this.startRotation + (dx * 0.5);
-      gsap.set('#ring', { rotationY: currentRotation });
+      rotation = this.startRotation + (dx * 0.5);
+      gsap.set('#ring', { rotationY: rotation });
     },
     
     onDragEnd: function() {
