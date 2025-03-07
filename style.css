@@ -118,7 +118,7 @@
 
 @media (max-width: 480px) {
   .panorama-slider__container {
-    perspective: 802px;
+    perspective: 800px;
   }
   
   .ring__video {
