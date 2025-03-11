@@ -110,18 +110,13 @@ $(document).ready(function() {
   Draggable.create('#dragger', {
     type: 'x',
     inertia: true,
-    dragResistance: 0.2,  // Reduced resistance for smoother dragging
+    dragResistance: 0.4,
     cursor: 'grab',
-    allowContextMenu: true,
-    minimumMovement: 2,  // Reduced threshold for drag initiation
-    edgeResistance: 0.65,
-    inertiaMultiplier: 0.8,  // Added momentum for natural feel
     
     onDragStart: function() {
       isDragging = true;
       this.startRotation = gsap.getProperty('#ring', 'rotationY');
       this.startX = this.x;
-      this.velocity = 0;
       $('.ring__video').addClass('draggable');
       gsap.set(this.target, { cursor: 'grabbing' });
       $(this.target).addClass('active');
@@ -129,32 +124,13 @@ $(document).ready(function() {
     
     onDrag: function() {
       const dx = this.startX - this.x;
-      const sensitivity = 0.8; // Increased rotation sensitivity
-      const rotation = this.startRotation + (dx * sensitivity);
-      this.velocity = this.getVelocity();
+      const rotation = this.startRotation + (dx * 0.5);
       gsap.set('#ring', { rotationY: rotation });
     },
     
     onDragEnd: function() {
       isDragging = false;
       this.startX = 0;
-      
-      // Add momentum-based animation
-      const momentum = Math.abs(this.velocity) > 50;
-      const currentRotation = gsap.getProperty('#ring', 'rotationY');
-      const snapAngle = 45;
-      let targetRotation = Math.round(currentRotation / snapAngle) * snapAngle;
-      
-      if (momentum) {
-        targetRotation += (this.velocity > 0 ? snapAngle : -snapAngle);
-      }
-      
-      gsap.to('#ring', {
-        rotationY: targetRotation,
-        duration: momentum ? 0.8 : 0.4,
-        ease: 'power2.out'
-      });
-      
       gsap.set(this.target, {
         x: 0,
         y: 0,
