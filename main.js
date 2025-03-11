@@ -94,52 +94,32 @@ $(document).ready(function() {
     if (e.key === 'ArrowRight') rotateSlider('next');
   });
 
-  $('.ring__video').on({
-    mouseenter: function() {
-      if (!isDragging) {
-        $('#dragger').addClass('active');
-      }
-    },
-    mouseleave: function() {
-      if (!isDragging) {
-        $('#dragger').removeClass('active');
-      }
-    }
-  });
+  const ring = document.getElementById('ring');
+  let lastMouseX = 0;
+  let rotationY = 0;
 
-  Draggable.create('#dragger', {
-    type: 'x',
-    inertia: true,
-    dragResistance: 0.4,
-    cursor: 'grab',
-    
-    onDragStart: function() {
-      isDragging = true;
-      this.startRotation = gsap.getProperty('#ring', 'rotationY');
-      this.startX = this.x;
-      $('.ring__video').addClass('draggable');
-      gsap.set(this.target, { cursor: 'grabbing' });
-      $(this.target).addClass('active');
-    },
-    
-    onDrag: function() {
-      const dx = this.startX - this.x;
-      const rotation = this.startRotation + (dx * 0.5);
-      gsap.set('#ring', { rotationY: rotation });
-    },
-    
-    onDragEnd: function() {
-      isDragging = false;
-      this.startX = 0;
-      gsap.set(this.target, {
-        x: 0,
-        y: 0,
-        cursor: 'grab'
-      });
-      $(this.target).removeClass('active');
-      $('.ring__video').removeClass('draggable');
-    }
-  });
+  ring.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+    rotationY = ring.style.transform ?
+      parseFloat(ring.style.transform.match(/rotateY\(([-\d.]+)deg\)/)?.[1] || 0) : 0;
+    ring.style.cursor = 'grabbing';
+  }, { passive: false });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - lastMouseX;
+    lastMouseX = e.clientX;
+    rotationY -= dx;
+    ring.style.transform = `rotateY(${rotationY}deg)`;
+  }, { passive: true });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    ring.style.cursor = 'grab';
+  }, { passive: true });
+
+  ring.style.cursor = 'grab';
 
   let resizeTimeout;
   $(window).on('resize', function() {
