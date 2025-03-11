@@ -1,9 +1,19 @@
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*/
+body {
+  background: #050505;
+  overflow: hidden;
+} 
+
 .panorama-slider {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background: #000;
 }
 
 .panorama-slider__container {
@@ -11,31 +21,22 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  perspective: 1500px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform-style: preserve-3d;
+  perspective: 2000px;
 }
 
 #ring {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
   transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
 }
 
 .video-cover-panorama {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 500px;
   transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   cursor: grab;
 }
 
@@ -43,102 +44,42 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 20px;
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.video-cover-panorama:hover .panorama-slider__video {
-  opacity: 1;
-}
-
-.ring__video:hover {
-  opacity: 1;
-}
-
-.ring__video.draggable {
-  pointer-events: none;
-  cursor: grabbing;
-}
-
-#dragger {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-  z-index: 5;
-  opacity: 0;
-  pointer-events: none;
-}
-
-#dragger.active {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-#dragger:active {
-  cursor: grabbing;
+  border-radius: 15px;
+  box-shadow: 0 5px 30px rgba(0,0,0,0.3);
 }
 
 .panorama-slider__arrow {
   position: absolute;
-  bottom: 100px;
+  bottom: 10%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 50%;
   width: 50px;
   height: 50px;
   cursor: pointer;
   z-index: 100;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto;
+  z-index: 100;
 }
 
 .panorama-slider__arrow i {
-  color: white;
+  color: #333;
   font-size: 20px;
 }
 
 .panorama-slider__arrow:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: white;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .panorama-slider__arrow--prev {
-  right: 120px;
+  left: 20px;
 }
 
 .panorama-slider__arrow--next {
   right: 20px;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .panorama-slider__container {
-    perspective: 1000px;
-  }
-  
-  .ring__video {
-    border-radius: 10px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  }
-}
-
-@media (max-width: 480px) {
-  .panorama-slider__container {
-    perspective: 800px;
-  }
-  
-  .ring__video {
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
-  }
-
 }
