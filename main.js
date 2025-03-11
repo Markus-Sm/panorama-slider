@@ -2,7 +2,7 @@
 (function($) {
   'use strict';
 
-  class PanoramaSlider {
+  class PanoramaSliderGsap {
     constructor(element, options) {
       this.$slider = $(element);
       this.$ring = this.$slider.find('.ring');
@@ -43,7 +43,7 @@
     updateSliderParameters() {
       const values = this.getResponsiveValues();
       
-      gsap.set(this.$slider.find('.panorama-slider__container'), {
+      gsap.set(this.$slider.find('.panorama-slider-gsap__container'), {
         perspective: values.perspective
       });
 
@@ -153,8 +153,8 @@
       this.initDragging();
 
       // Event listeners
-      this.$slider.find('.panorama-slider__arrow--prev').on('click', () => this.rotateSlider('prev'));
-      this.$slider.find('.panorama-slider__arrow--next').on('click', () => this.rotateSlider('next'));
+      this.$slider.find('.panorama-slider-gsap__arrow--prev').on('click', () => this.rotateSlider('prev'));
+      this.$slider.find('.panorama-slider-gsap__arrow--next').on('click', () => this.rotateSlider('next'));
 
       // Keyboard navigation
       $(document).on('keydown', (e) => {
@@ -172,10 +172,10 @@
   }
 
   // jQuery plugin definition
-  $.fn.panoramaSlider = function(options) {
+  $.fn.panoramaSliderGsap = function(options) {
     return this.each(function() {
-      if (!$.data(this, 'panoramaSlider')) {
-        $.data(this, 'panoramaSlider', new PanoramaSlider(this, options));
+      if (!$.data(this, 'panoramaSliderGsap')) {
+        $.data(this, 'panoramaSliderGsap', new PanoramaSliderGsap(this, options));
       }
     });
   };
@@ -183,5 +183,5 @@
 
 // Inicjalizacja
 $(document).ready(function() {
-  $('.panorama-slider').panoramaSlider();
+  $('.panorama-slider-gsap').panoramaSliderGsap();
 });

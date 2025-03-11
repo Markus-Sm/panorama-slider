@@ -9,14 +9,14 @@ body {
   overflow: hidden;
 } 
 
-.panorama-slider {
+.panorama-slider-gsap {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
 
-.panorama-slider__container {
+.panorama-slider-gsap__container {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -31,7 +31,7 @@ body {
   transform-style: preserve-3d;
 }
 
-.video-cover-panorama {
+.panorama-slider-gsap__slide {
   position: absolute;
   width: 800px;
   height: 500px;
@@ -40,7 +40,7 @@ body {
   cursor: grab;
 }
 
-.panorama-slider__video {
+.panorama-slider-gsap__video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -48,7 +48,7 @@ body {
   box-shadow: 0 5px 30px rgba(0,0,0,0.3);
 }
 
-.panorama-slider__arrow {
+.panorama-slider-gsap__arrow {
   position: absolute;
   bottom: 10%;
   transform: translateY(-50%);
@@ -66,20 +66,20 @@ body {
   z-index: 100;
 }
 
-.panorama-slider__arrow i {
+.panorama-slider-gsap__arrow i {
   color: #333;
   font-size: 20px;
 }
 
-.panorama-slider__arrow:hover {
+.panorama-slider-gsap__arrow:hover {
   background: white;
   transform: translateY(-50%) scale(1.1);
 }
 
-.panorama-slider__arrow--prev {
+.panorama-slider-gsap__arrow--prev {
   left: 20px;
 }
 
-.panorama-slider__arrow--next {
+.panorama-slider-gsap__arrow--next {
   right: 20px;
 }
