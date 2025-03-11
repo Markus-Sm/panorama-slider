@@ -6,7 +6,7 @@
     constructor(element, options) {
       this.$slider = $(element);
       this.$ring = this.$slider.find('.ring');
-      this.$videos = this.$slider.find('.ring__video');
+      this.$slides = this.$slider.find('.video-cover-panorama');
       
       this.options = $.extend({
         baseWidth: 1920,
@@ -47,7 +47,7 @@
         perspective: values.perspective
       });
 
-      gsap.set(this.$videos, {
+      gsap.set(this.$slides, {
         width: values.videoWidth,
         height: values.videoHeight,
         rotateY: (i) => i * -45,
@@ -58,17 +58,16 @@
     }
 
     initializeVideos() {
-      this.$videos.each((index, video) => {
-        const $video = $(video);
-        const $source = $video.find('source');
+      this.$slides.each((index, slide) => {
+        const $slide = $(slide);
+        const video = $slide.find('video')[0];
         
-        $source.attr('src', $source.data('src'));
-        $video.attr('poster', $video.data('poster'));
-        video.load();
-        
-        $video.on('error', () => {
-          console.error('Error loading video:', index);
-        });
+        if (video) {
+          video.load();
+          $(video).on('error', () => {
+            console.error('Error loading video:', index);
+          });
+        }
       });
     }
 
@@ -89,31 +88,50 @@
     }
 
     initDragging() {
+      const startDrag = (e) => {
+        e.preventDefault();
+        this.state.isDragging = true;
+        this.state.lastMouseX = e.clientX || e.originalEvent.touches[0].clientX;
+        
+        const transform = this.$ring[0].style.transform;
+        const match = transform.match(/rotateY\(([-\d.]+)deg\)/i);
+        this.state.rotationY = match ? parseFloat(match[1]) : this.state.rotationY;
+        
+        this.$ring.css('cursor', 'grabbing');
+        this.$slides.css('cursor', 'grabbing');
+      };
+
+      const onDrag = (e) => {
+        if (!this.state.isDragging) return;
+        const clientX = e.clientX || e.originalEvent.touches[0].clientX;
+        const dx = this.state.lastMouseX - clientX;
+        this.state.lastMouseX = clientX;
+        
+        this.state.rotationY += dx * this.options.rotationSpeed;
+        this.$ring.css('transform', `rotateY(${this.state.rotationY}deg)`);
+      };
+
+      const endDrag = () => {
+        if (!this.state.isDragging) return;
+        this.state.isDragging = false;
+        this.$ring.css('cursor', 'grab');
+        this.$slides.css('cursor', 'grab');
+      };
+
+      // Obsługa myszy i dotyku dla ringa
       this.$ring
         .css('cursor', 'grab')
-        .on('mousedown touchstart', (e) => {
-          e.preventDefault();
-          this.state.isDragging = true;
-          this.state.lastMouseX = e.clientX || e.originalEvent.touches[0].clientX;
-          this.state.rotationY = parseFloat(this.$ring.css('transform').split(',')[0].slice(7)) || this.state.rotationY;
-          this.$ring.css('cursor', 'grabbing');
-        });
+        .on('mousedown touchstart', startDrag);
 
+      // Obsługa myszy i dotyku dla slajdów
+      this.$slides
+        .css('cursor', 'grab')
+        .on('mousedown touchstart', startDrag);
+
+      // Globalne handlery dla przeciągania
       $(document)
-        .on('mousemove touchmove', (e) => {
-          if (!this.state.isDragging) return;
-          const clientX = e.clientX || e.originalEvent.touches[0].clientX;
-          const dx = this.state.lastMouseX - clientX;
-          this.state.lastMouseX = clientX;
-          
-          this.state.rotationY += dx * this.options.rotationSpeed;
-          this.$ring.css('transform', `rotateY(${this.state.rotationY}deg)`);
-        })
-        .on('mouseup touchend mouseleave', () => {
-          if (!this.state.isDragging) return;
-          this.state.isDragging = false;
-          this.$ring.css('cursor', 'grab');
-        });
+        .on('mousemove touchmove', onDrag)
+        .on('mouseup touchend mouseleave', endDrag);
     }
 
     init() {
@@ -124,7 +142,7 @@
           this.updateSliderParameters();
           this.initializeVideos();
         })
-        .from(this.$videos, {
+        .from(this.$slides, {
           duration: 1.5,
           y: 200,
           opacity: 0,
