@@ -6,7 +6,7 @@
     constructor(element, options) {
       this.$slider = $(element);
       this.$ring = this.$slider.find('.ring');
-      this.$slides = this.$slider.find('.video-cover-panorama');
+      this.$slides = this.$slider.find('.panorama-slider-gsap__video');
       
       this.options = $.extend({
         baseWidth: 1920,
