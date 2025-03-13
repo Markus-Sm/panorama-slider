@@ -9,7 +9,7 @@
       this.$videos = this.$slider.find('.ring__video');
       
       this.options = $.extend({
-        baseWidth: 1920,
+        baseWidth: 1930,
         videoWidth: 1680,
         videoHeight: 1120,
         zDistance: 2200,
